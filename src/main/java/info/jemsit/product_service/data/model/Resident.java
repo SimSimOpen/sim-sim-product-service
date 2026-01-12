@@ -22,6 +22,8 @@ public class Resident extends BaseEntity {
     private Boolean isForRent;
     private String ownerContact;
     private String publish;
+
+    //mundan pesi gerekmidi
     private String agent;
     private Long agentID;
 
