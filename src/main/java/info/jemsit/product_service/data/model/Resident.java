@@ -2,12 +2,15 @@ package info.jemsit.product_service.data.model;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.math.BigDecimal;
 import java.util.List;
 
 @Entity
 @Table(name = "residents")
+@Getter@Setter
 public class Resident extends BaseEntity {
     private String title;
     private String country;
