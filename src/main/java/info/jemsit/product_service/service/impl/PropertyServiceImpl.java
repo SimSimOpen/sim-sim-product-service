@@ -1,12 +1,12 @@
 package info.jemsit.product_service.service.impl;
 
-import info.jemsit.common.dto.request.product.ResidentRequestDTO;
-import info.jemsit.common.dto.response.product.ResidentResponseDTO;
+import info.jemsit.common.dto.request.product.PropertyRequestDTO;
+import info.jemsit.common.dto.response.product.PropertyResponseDTO;
 import info.jemsit.common.exceptions.UserException;
-import info.jemsit.product_service.data.dao.ResidentDAO;
-import info.jemsit.product_service.data.model.Resident;
-import info.jemsit.product_service.mapper.ResidentMapper;
-import info.jemsit.product_service.service.ResidentService;
+import info.jemsit.product_service.data.dao.PropertyDAO;
+import info.jemsit.product_service.data.model.Property;
+import info.jemsit.product_service.mapper.PropertyMapper;
+import info.jemsit.product_service.service.PropertyService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -16,22 +16,22 @@ import org.springframework.stereotype.Service;
 @Service
 @RequiredArgsConstructor
 @Slf4j
-public class ResidentServiceImpl implements ResidentService {
+public class PropertyServiceImpl implements PropertyService {
 
-    private final ResidentDAO residentDAO;
+    private final PropertyDAO propertyDAO;
 
-    private final ResidentMapper residentMapper;
+    private final PropertyMapper propertyMapper;
 
     @Override
-    public String addResidentToProduct(ResidentRequestDTO request) {
-        residentDAO.save(residentMapper.toEntity(request));
+    public String add(PropertyRequestDTO request) {
+        propertyDAO.save(propertyMapper.toEntity(request));
         return  "Resident information added to product successfully.";
     }
 
     @Override
-    public ResidentResponseDTO update(Long id, ResidentRequestDTO request) {
+    public PropertyResponseDTO update(Long id, PropertyRequestDTO request) {
 
-        Resident toUpdate = residentDAO.findById(id).orElseThrow(()->new UserException("Resident not found with id: " + id));
+        Property toUpdate = propertyDAO.findById(id).orElseThrow(()->new UserException("Resident not found with id: " + id));
 
         if(request.title() != null && !request.title().isEmpty()){
             toUpdate.setTitle(request.title());
@@ -65,7 +65,7 @@ public class ResidentServiceImpl implements ResidentService {
             toUpdate.setArea(request.area());
         }
         if (request.isForRent() != null) {
-            toUpdate.setIsForRent(request.isForRent());
+            toUpdate.setIsActive(request.isForRent());
         }
         if (request.ownerContact() != null && !request.ownerContact().isEmpty()) {
             toUpdate.setOwnerContact(request.ownerContact());
@@ -73,28 +73,28 @@ public class ResidentServiceImpl implements ResidentService {
         if (request.publish() != null && !request.publish().isEmpty()) {
             toUpdate.setPublish(request.publish());
         }
-        Resident updatedResident = residentDAO.update(toUpdate);
-        return residentMapper.toDto(updatedResident);
+        Property updatedProperty = propertyDAO.update(toUpdate);
+        return propertyMapper.toDto(updatedProperty);
     }
 
     @Override
-    public Page<ResidentResponseDTO> getAll(Pageable pageable) {
-        Page<Resident> residents = residentDAO.findAll(pageable);
-        return residents.map(residentMapper::toDto);
+    public Page<PropertyResponseDTO> getAll(Pageable pageable) {
+        Page<Property> residents = propertyDAO.findAll(pageable);
+        return residents.map(propertyMapper::toDto);
     }
 
     @Override
-    public ResidentResponseDTO getById(Long id) {
-        Resident resident = residentDAO.findById(id)
+    public PropertyResponseDTO getById(Long id) {
+        Property property = propertyDAO.findById(id)
                 .orElseThrow(() -> new UserException("Resident not found with id: " + id));
-        return residentMapper.toDto(resident);
+        return propertyMapper.toDto(property);
     }
 
     @Override
     public String deleteById(Long id) {
-        residentDAO.findById(id)
+        propertyDAO.findById(id)
                 .orElseThrow(() -> new UserException("Resident not found with id: " + id));
-        residentDAO.deleteById(id);
+        propertyDAO.deleteById(id);
         return "Resident with id " + id + " has been deleted successfully.";
     }
 

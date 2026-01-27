@@ -1,13 +1,13 @@
 package info.jemsit.product_service.mapper;
 
-import info.jemsit.common.dto.request.product.ResidentRequestDTO;
-import info.jemsit.common.dto.response.product.ResidentResponseDTO;
-import info.jemsit.product_service.data.model.Resident;
+import info.jemsit.common.dto.request.product.PropertyRequestDTO;
+import info.jemsit.common.dto.response.product.PropertyResponseDTO;
+import info.jemsit.product_service.data.model.Property;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
 @Mapper(componentModel = "spring")
-public interface ResidentMapper {
+public interface PropertyMapper {
 
     @Mapping(target = "updatedAt", ignore = true)
     @Mapping(target = "pictures", ignore = true)
@@ -18,10 +18,10 @@ public interface ResidentMapper {
     @Mapping(target = "createdAt", ignore = true)
     @Mapping(target = "agentID", ignore = true)
     @Mapping(target = "agent", ignore = true)
-    Resident toEntity(ResidentRequestDTO resident);
+    Property toEntity(PropertyRequestDTO resident);
 
     @Mapping(target = "category", ignore = true)
     @Mapping(target = "agentId", ignore = true)
     @Mapping(target = "ForSale", ignore = true)
-    ResidentResponseDTO toDto(Resident resident);
+    PropertyResponseDTO toDto(Property property);
 }

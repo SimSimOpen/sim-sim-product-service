@@ -1,5 +1,6 @@
 package info.jemsit.product_service.data.model;
 
+import info.jemsit.common.data.enums.PropertyStatus;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
 import lombok.Getter;
@@ -9,9 +10,9 @@ import java.math.BigDecimal;
 import java.util.List;
 
 @Entity
-@Table(name = "residents")
+@Table(name = "properties")
 @Getter@Setter
-public class Resident extends BaseEntity {
+public class Property extends BaseEntity {
     private String title;
     private String country;
     private String region;
@@ -22,8 +23,11 @@ public class Resident extends BaseEntity {
     private BigDecimal price;
     private Integer numberOfRooms;
     private Double area;
-    private Boolean isForRent;
+    private Boolean isActive;
+    private String category;
     private String ownerContact;
+    private String type;
+    private PropertyStatus status;
     private String publish;
 
     //mundan pesi gerekmidi
