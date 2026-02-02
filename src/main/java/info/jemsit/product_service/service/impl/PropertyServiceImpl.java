@@ -1,10 +1,11 @@
 package info.jemsit.product_service.service.impl;
 
-import info.jemsit.common.dto.request.product.PropertyRequestDTO;
-import info.jemsit.common.dto.response.product.PropertyResponseDTO;
+import info.jemsit.common.dto.request.product.property.PropertyRequestDTO;
+import info.jemsit.common.dto.response.product.propeprty.PropertyResponseDTO;
 import info.jemsit.common.exceptions.UserException;
 import info.jemsit.product_service.data.dao.PropertyDAO;
-import info.jemsit.product_service.data.model.Property;
+import info.jemsit.product_service.data.model.property.Property;
+import info.jemsit.product_service.data.model.property.PropertyMediaData;
 import info.jemsit.product_service.mapper.PropertyMapper;
 import info.jemsit.product_service.service.PropertyService;
 import lombok.RequiredArgsConstructor;
@@ -12,6 +13,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -25,33 +29,18 @@ public class PropertyServiceImpl implements PropertyService {
     @Override
     public String add(PropertyRequestDTO request) {
         propertyDAO.save(propertyMapper.toEntity(request));
-        return  "Property information added to product successfully.";
+        return "Property information added to product successfully.";
     }
 
     @Override
     public PropertyResponseDTO update(Long id, PropertyRequestDTO request) {
 
-        Property toUpdate = propertyDAO.findById(id).orElseThrow(()->new UserException("Property not found with id: " + id));
+        Property toUpdate = propertyDAO.findById(id).orElseThrow(() -> new UserException("Property not found with id: " + id));
 
-        if(request.title() != null && !request.title().isEmpty()){
+        if (request.title() != null && !request.title().isEmpty()) {
             toUpdate.setTitle(request.title());
         }
-        if(request.country() != null && !request.country().isEmpty()){
-            toUpdate.setCountry(request.country());
-        }
 
-        if (request.region() != null && !request.region().isEmpty()) {
-            toUpdate.setRegion(request.region());
-        }
-        if (request.city() != null && !request.city().isEmpty()) {
-            toUpdate.setCity(request.city());
-        }
-        if (request.district() != null && !request.district().isEmpty()) {
-            toUpdate.setDistrict(request.district());
-        }
-        if (request.address() != null && !request.address().isEmpty()) {
-            toUpdate.setAddress(request.address());
-        }
         if (request.description() != null) {
             toUpdate.setDescription(request.description());
         }
@@ -64,11 +53,8 @@ public class PropertyServiceImpl implements PropertyService {
         if (request.area() != null) {
             toUpdate.setArea(request.area());
         }
-        if (request.isForRent() != null) {
-            toUpdate.setIsActive(request.isForRent());
-        }
         if (request.ownerContact() != null && !request.ownerContact().isEmpty()) {
-            toUpdate.setOwnerContact(request.ownerContact());
+            toUpdate.setOwnerOrAgentContact(request.ownerContact());
         }
         if (request.publish() != null && !request.publish().isEmpty()) {
             toUpdate.setPublish(request.publish());
@@ -96,6 +82,30 @@ public class PropertyServiceImpl implements PropertyService {
                 .orElseThrow(() -> new UserException("Property not found with id: " + id));
         propertyDAO.deleteById(id);
         return "Property with id " + id + " has been deleted successfully.";
+    }
+
+    @Override
+    @Transactional
+    public PropertyResponseDTO addPropertyImage(Long property_id, List<String> urls) {
+
+        Property property = propertyDAO.findById(property_id)
+                .orElseThrow(() -> new UserException("Property not found with id: " + property_id));
+        for (String url : urls) {
+            PropertyMediaData image = new PropertyMediaData();
+            image.setMediaURL(url);
+            image.setProperty(property);
+            property.getMedias().add(image);
+        }
+
+        var updated = propertyDAO.update(property);
+        return propertyMapper.toDto(updated);
+    }
+
+    @Override
+    public PropertyResponseDTO createPropertyDraft() {
+        Property property = new Property();
+        propertyDAO.save(property);
+        return propertyMapper.toDto(property);
     }
 
 }
