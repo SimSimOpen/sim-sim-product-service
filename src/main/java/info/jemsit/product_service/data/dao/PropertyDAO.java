@@ -1,6 +1,6 @@
 package info.jemsit.product_service.data.dao;
 
-import info.jemsit.product_service.data.model.Property;
+import info.jemsit.product_service.data.model.property.Property;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 

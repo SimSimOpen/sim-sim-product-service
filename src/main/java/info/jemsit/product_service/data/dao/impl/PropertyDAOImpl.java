@@ -1,7 +1,7 @@
 package info.jemsit.product_service.data.dao.impl;
 
 import info.jemsit.product_service.data.dao.PropertyDAO;
-import info.jemsit.product_service.data.model.Property;
+import info.jemsit.product_service.data.model.property.Property;
 import info.jemsit.product_service.data.repository.PropertyRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
