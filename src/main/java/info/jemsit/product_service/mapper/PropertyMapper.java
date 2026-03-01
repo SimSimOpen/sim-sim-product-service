@@ -32,7 +32,7 @@ public interface PropertyMapper {
         }
         return media.stream()
                 .map(p->{
-                    return new PropertyMedia(p.getId(), "http://localhost:9000"+p.getMediaURL());
+                    return new PropertyMedia(p.getId(), "https://api.media.simsim.fit"+p.getMediaURL());
                 })
                 .collect(Collectors.toList());
     }
