@@ -16,7 +16,6 @@ public interface PropertyMapper {
 
     @Mapping(target = "updatedAt", ignore = true)
     @Mapping(target = "isDeleted", ignore = true)
-    @Mapping(target = "id", ignore = true)
     @Mapping(target = "deletedAt", ignore = true)
     @Mapping(target = "createdAt", ignore = true)
     @Mapping(target = "agentID", ignore = true)
@@ -32,7 +31,7 @@ public interface PropertyMapper {
         }
         return media.stream()
                 .map(p->{
-                    return new PropertyMedia(p.getId(), "https://api.media.simsim.fit"+p.getMediaURL());
+                    return new PropertyMedia(p.getId(), "https://api.media.simsim.fit"+p.getMediaURL(), p.getIsCoverImage());
                 })
                 .collect(Collectors.toList());
     }

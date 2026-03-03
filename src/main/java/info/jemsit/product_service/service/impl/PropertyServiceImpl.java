@@ -1,6 +1,8 @@
 package info.jemsit.product_service.service.impl;
 
+import info.jemsit.common.clients.media.MediaServiceClient;
 import info.jemsit.common.data.enums.property.ListingStatus;
+import info.jemsit.common.dto.request.product.property.AddPropertyImagesRequestDTO;
 import info.jemsit.common.dto.request.product.property.PropertyRequestDTO;
 import info.jemsit.common.dto.response.product.propeprty.PropertyResponseDTO;
 import info.jemsit.common.exceptions.UserException;
@@ -26,6 +28,8 @@ public class PropertyServiceImpl implements PropertyService {
     private final PropertyDAO propertyDAO;
 
     private final PropertyMapper propertyMapper;
+
+    private final MediaServiceClient mediaServiceClient;
 
     @Override
     public String add(PropertyRequestDTO request) {
@@ -87,19 +91,23 @@ public class PropertyServiceImpl implements PropertyService {
 
     @Override
     @Transactional
-    public PropertyResponseDTO addPropertyImage(Long property_id, List<String> urls) {
+    public PropertyResponseDTO addPropertyImage(AddPropertyImagesRequestDTO request) {
+        Long property_id = request.id();
 
         Property property = propertyDAO.findById(property_id)
                 .orElseThrow(() -> new UserException("Property not found with id: " + property_id));
-        for (String url : urls) {
+        var hasCoverImage = property.getMedias().stream().anyMatch(PropertyMediaData::getIsCoverImage);
+        for (String url : request.urls()) {
             PropertyMediaData image = new PropertyMediaData();
             image.setMediaURL(url);
             image.setProperty(property);
-            property.getMedias().add(image);
+            if (!hasCoverImage){
+                image.setIsCoverImage(true);
+                hasCoverImage = true;
+            }
+            property.addMedia(image);
         }
-
-        var updated = propertyDAO.update(property);
-        return propertyMapper.toDto(updated);
+        return propertyMapper.toDto(property);
     }
 
     @Override
@@ -108,6 +116,27 @@ public class PropertyServiceImpl implements PropertyService {
         property.setListingStatus(ListingStatus.DRAFT);
         propertyDAO.save(property);
         return propertyMapper.toDto(property);
+    }
+
+    @Override
+    public void deletePropertyImage(Long id) {
+        var media = propertyDAO.getPropertyMediaById(id)
+                .orElseThrow(() -> new UserException("Property media not found with id: " + id));
+
+        mediaServiceClient.deleteMedia(media.getMediaURL());
+        propertyDAO.deletePropertyMediaById(id);
+        if (media.getIsCoverImage()){
+            reAssignCoverImage(media.getProperty().getId());
+        }
+    }
+
+    private void reAssignCoverImage(long propertyId){
+        var property = propertyDAO.findById(propertyId)
+                .orElseThrow(() -> new UserException("Property not found with id: " + propertyId));
+        var mediaList = property.getMedias();
+        if (mediaList.isEmpty()) return;
+        mediaList.getFirst().setIsCoverImage(true);
+        propertyDAO.update(property);
     }
 
 }

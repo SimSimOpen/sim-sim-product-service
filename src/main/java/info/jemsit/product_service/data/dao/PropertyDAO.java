@@ -1,6 +1,7 @@
 package info.jemsit.product_service.data.dao;
 
 import info.jemsit.product_service.data.model.property.Property;
+import info.jemsit.product_service.data.model.property.PropertyMediaData;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -13,4 +14,8 @@ public interface PropertyDAO {
     void deleteById(Long id);
 
     Page<Property> findAll(Pageable pageable);
+
+    Optional<PropertyMediaData> getPropertyMediaById(Long id);
+
+    void deletePropertyMediaById(Long id);
 }

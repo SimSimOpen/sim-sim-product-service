@@ -2,6 +2,8 @@ package info.jemsit.product_service.data.dao.impl;
 
 import info.jemsit.product_service.data.dao.PropertyDAO;
 import info.jemsit.product_service.data.model.property.Property;
+import info.jemsit.product_service.data.model.property.PropertyMediaData;
+import info.jemsit.product_service.data.repository.PropertyMediaDataRepository;
 import info.jemsit.product_service.data.repository.PropertyRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -18,6 +20,8 @@ public class PropertyDAOImpl implements PropertyDAO {
 
     private final PropertyRepository propertyRepository;
 
+    private final PropertyMediaDataRepository propertyMediaDataRepository;
+
     @Override
     public Property save(Property property) {
         log.info("Saving property: {}", property);
@@ -26,7 +30,7 @@ public class PropertyDAOImpl implements PropertyDAO {
 
     @Override
     public Property update(Property property) {
-        log.info("Updating property: {}", property);
+        log.info("Updating property: {}", property.getTitle() !=null ? property.getTitle() : property.getId());
         return propertyRepository.save(property);
     }
 
@@ -48,5 +52,17 @@ public class PropertyDAOImpl implements PropertyDAO {
 
         log.info("Finding all properties with pagination: {}", pageable);
         return propertyRepository.findAll(pageable);
+    }
+
+    @Override
+    public Optional<PropertyMediaData> getPropertyMediaById(Long id) {
+        log.info("Finding property media by ID: {}", id);
+        return propertyMediaDataRepository.findById(id);
+    }
+
+    @Override
+    public void deletePropertyMediaById(Long id) {
+        log.info("Deleting property media by ID: {}", id);
+        propertyMediaDataRepository.deleteById(id);
     }
 }
