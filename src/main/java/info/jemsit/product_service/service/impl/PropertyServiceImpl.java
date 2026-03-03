@@ -18,8 +18,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
-
 @Service
 @RequiredArgsConstructor
 @Slf4j
@@ -107,10 +105,13 @@ public class PropertyServiceImpl implements PropertyService {
             }
             property.addMedia(image);
         }
-        return propertyMapper.toDto(property);
+        log.info("Property after adding images:{} ", property);
+        var updated = propertyDAO.update(property);
+        return propertyMapper.toDto(updated);
     }
 
     @Override
+    @Transactional
     public PropertyResponseDTO createPropertyDraft() {
         Property property = new Property();
         property.setListingStatus(ListingStatus.DRAFT);

@@ -58,5 +58,15 @@ public class Property extends BaseEntity {
         media.setProperty(this);
     }
 
-
+    @Override
+    public String toString() {
+        return "Property{" +
+                "title='" + title + '\'' +
+                ", description=" + description +
+                ", price=" + price +
+                ", numberOfRooms=" + numberOfRooms +
+                ", area=" + area +
+                ", medias=" + medias.stream().map(m -> m.getId() + ":" + m.getMediaURL()).toList() +
+                '}';
+    }
 }
