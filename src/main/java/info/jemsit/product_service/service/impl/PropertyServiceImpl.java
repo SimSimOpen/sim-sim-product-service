@@ -1,7 +1,9 @@
 package info.jemsit.product_service.service.impl;
 
 import info.jemsit.common.clients.media.MediaServiceClient;
+import info.jemsit.common.data.enums.RabbitMQMessages;
 import info.jemsit.common.data.enums.property.ListingStatus;
+import info.jemsit.common.dto.message.MediaUploaded;
 import info.jemsit.common.dto.request.product.property.AddPropertyImagesRequestDTO;
 import info.jemsit.common.dto.request.product.property.PropertyRequestDTO;
 import info.jemsit.common.dto.response.product.propeprty.PropertyResponseDTO;
@@ -11,6 +13,7 @@ import info.jemsit.product_service.data.model.property.Property;
 import info.jemsit.product_service.data.model.property.PropertyMediaData;
 import info.jemsit.product_service.mapper.PropertyMapper;
 import info.jemsit.product_service.service.PropertyService;
+import info.jemsit.product_service.service.RabbitMQService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -24,10 +27,9 @@ import org.springframework.transaction.annotation.Transactional;
 public class PropertyServiceImpl implements PropertyService {
 
     private final PropertyDAO propertyDAO;
-
     private final PropertyMapper propertyMapper;
-
     private final MediaServiceClient mediaServiceClient;
+    private final RabbitMQService rabbitMQService;
 
     @Override
     public String add(PropertyRequestDTO request) {
@@ -107,6 +109,7 @@ public class PropertyServiceImpl implements PropertyService {
         }
         log.info("Property after adding images:{} ", property);
         var updated = propertyDAO.update(property);
+        rabbitMQService.sendMessageToRabbitMQ(new MediaUploaded("1", RabbitMQMessages.MEDIA_UPLOADED));
         return propertyMapper.toDto(updated);
     }
 
