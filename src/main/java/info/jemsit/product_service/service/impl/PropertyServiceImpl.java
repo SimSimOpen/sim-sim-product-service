@@ -83,8 +83,11 @@ public class PropertyServiceImpl implements PropertyService {
 
     @Override
     public String deleteById(Long id) {
-        propertyDAO.findById(id)
+        var property = propertyDAO.findById(id)
                 .orElseThrow(() -> new UserException("Property not found with id: " + id));
+        for (PropertyMediaData media : property.getMedias()) {
+            mediaServiceClient.deleteMedia(media.getMediaURL());
+        }
         propertyDAO.deleteById(id);
         return "Property with id " + id + " has been deleted successfully.";
     }
