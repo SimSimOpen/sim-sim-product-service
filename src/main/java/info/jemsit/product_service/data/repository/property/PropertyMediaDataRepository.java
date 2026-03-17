@@ -1,4 +1,4 @@
-package info.jemsit.product_service.data.repository;
+package info.jemsit.product_service.data.repository.property;
 
 import info.jemsit.product_service.data.model.property.PropertyMediaData;
 import org.springframework.data.jpa.repository.JpaRepository;

@@ -3,14 +3,15 @@ package info.jemsit.product_service.data.dao.impl;
 import info.jemsit.product_service.data.dao.PropertyDAO;
 import info.jemsit.product_service.data.model.property.Property;
 import info.jemsit.product_service.data.model.property.PropertyMediaData;
-import info.jemsit.product_service.data.repository.PropertyMediaDataRepository;
-import info.jemsit.product_service.data.repository.PropertyRepository;
+import info.jemsit.product_service.data.repository.property.PropertyMediaDataRepository;
+import info.jemsit.product_service.data.repository.property.PropertyRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 @RequiredArgsConstructor
@@ -64,5 +65,12 @@ public class PropertyDAOImpl implements PropertyDAO {
     public void deletePropertyMediaById(Long id) {
         log.info("Deleting property media by ID: {}", id);
         propertyMediaDataRepository.deleteById(id);
+    }
+
+    @Override
+    public List<String> getPropertyAddressShort(long locationId) {
+
+        log.info("Getting short address for property ID: {}", locationId);
+        return propertyRepository.findShortAddressById(locationId);
     }
 }

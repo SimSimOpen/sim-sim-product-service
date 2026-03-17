@@ -4,6 +4,8 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.List;
+
 @Entity
 @Table(name = "property_locations")
 @Getter
@@ -14,9 +16,12 @@ public class PropertyLocation {
     private Long id;
     private String mapLocation;
     private String country;
-    private String region;
-    private String city;
-    private String district;
+    @Column(name = "region_id")
+    private Long regionID;
+    @Column(name = "district_id")
+    private Long districtID;
+    @Column(name = "place_id")
+    private Long placeID;
     private String address;
-
 }
+

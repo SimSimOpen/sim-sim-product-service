@@ -23,7 +23,12 @@ public interface PropertyMapper {
     Property toEntity(PropertyRequestDTO resident);
 
     @Mapping(target = "medias", expression = "java(mapMedia(property.getMedias()))")
+    @Mapping(target = "location", ignore = true)
     PropertyResponseDTO toDto(Property property);
+
+    @Mapping(target = "medias", expression = "java(mapMedia(property.getMedias()))")
+    @Mapping(target = "location", source = "shortAddress")
+    PropertyResponseDTO toDtoWithShortAddress(Property property, List<String> shortAddress);
 
     default List<PropertyMedia> mapMedia(List<PropertyMediaData> media) {
         if (media == null) {

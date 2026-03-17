@@ -10,6 +10,7 @@ import info.jemsit.common.dto.response.product.propeprty.PropertyResponseDTO;
 import info.jemsit.common.exceptions.UserException;
 import info.jemsit.product_service.data.dao.PropertyDAO;
 import info.jemsit.product_service.data.model.property.Property;
+import info.jemsit.product_service.data.model.property.PropertyLocation;
 import info.jemsit.product_service.data.model.property.PropertyMediaData;
 import info.jemsit.product_service.mapper.PropertyMapper;
 import info.jemsit.product_service.service.PropertyService;
@@ -20,6 +21,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -33,19 +36,21 @@ public class PropertyServiceImpl implements PropertyService {
 
     @Override
     public String add(PropertyRequestDTO request) {
-        propertyDAO.save(propertyMapper.toEntity(request));
+        Property entity = propertyMapper.toEntity(request);
+        System.out.println("Entity after mapping: " + entity);
+        propertyDAO.save(entity);
         return "Property information added to product successfully.";
     }
 
     @Override
     public PropertyResponseDTO update(Long id, PropertyRequestDTO request) {
+        System.out.println("PropertyRequestDTO received for update: " + request);
 
         Property toUpdate = propertyDAO.findById(id).orElseThrow(() -> new UserException("Property not found with id: " + id));
 
         if (request.title() != null && !request.title().isEmpty()) {
             toUpdate.setTitle(request.title());
         }
-
         if (request.description() != null) {
             toUpdate.setDescription(request.description());
         }
@@ -61,17 +66,38 @@ public class PropertyServiceImpl implements PropertyService {
         if (request.ownerContact() != null && !request.ownerContact().isEmpty()) {
             toUpdate.setOwnerOrAgentContact(request.ownerContact());
         }
+        if (request.offerType() != null) {
+            toUpdate.setOfferType(request.offerType());
+        }
+        if (request.type() != null) {
+            toUpdate.setType(request.type());
+        }
+        if(request.category() != null) {
+            toUpdate.setCategory(request.category());
+        }
+        if (request.listingStatus() != null) {
+            toUpdate.setListingStatus(request.listingStatus());
+        }
+        if(request.occupancyStatus() != null) {
+            toUpdate.setOccupancyStatus(request.occupancyStatus());
+        }
         if (request.publish() != null && !request.publish().isEmpty()) {
             toUpdate.setPublish(request.publish());
         }
+        if (request.location() != null) {
+            var location = getPropertyLocation(request, toUpdate);
+            toUpdate.setLocation(location);
+        }
         Property updatedProperty = propertyDAO.update(toUpdate);
-        return propertyMapper.toDto(updatedProperty);
+        return propertyMapper.toDtoWithShortAddress(updatedProperty, getLocationList(updatedProperty.getLocation()));
     }
+
+
 
     @Override
     public Page<PropertyResponseDTO> getAll(Pageable pageable) {
         Page<Property> properties = propertyDAO.findAll(pageable);
-        return properties.map(propertyMapper::toDto);
+        return properties.map((p) -> propertyMapper.toDtoWithShortAddress(p, getLocationList(p.getLocation())));
     }
 
     @Override
@@ -104,7 +130,7 @@ public class PropertyServiceImpl implements PropertyService {
             PropertyMediaData image = new PropertyMediaData();
             image.setMediaURL(url);
             image.setProperty(property);
-            if (!hasCoverImage){
+            if (!hasCoverImage) {
                 image.setIsCoverImage(true);
                 hasCoverImage = true;
             }
@@ -112,7 +138,7 @@ public class PropertyServiceImpl implements PropertyService {
         }
         log.info("Property after adding images:{} ", property);
         var updated = propertyDAO.update(property);
-        rabbitMQService.sendMessageToRabbitMQ(new MediaUploaded("1", RabbitMQMessages.MEDIA_UPLOADED));
+        rabbitMQService.sendMessageToRabbitMQ(new MediaUploaded("1", RabbitMQMessages.MEDIA_UPDATE));
         return propertyMapper.toDto(updated);
     }
 
@@ -132,18 +158,37 @@ public class PropertyServiceImpl implements PropertyService {
 
         mediaServiceClient.deleteMedia(media.getMediaURL());
         propertyDAO.deletePropertyMediaById(id);
-        if (media.getIsCoverImage()){
+        if (media.getIsCoverImage()) {
             reAssignCoverImage(media.getProperty().getId());
         }
+        rabbitMQService.sendMessageToRabbitMQ(new MediaUploaded("1", RabbitMQMessages.MEDIA_UPDATE));
     }
 
-    private void reAssignCoverImage(long propertyId){
+    private void reAssignCoverImage(long propertyId) {
         var property = propertyDAO.findById(propertyId)
                 .orElseThrow(() -> new UserException("Property not found with id: " + propertyId));
         var mediaList = property.getMedias();
         if (mediaList.isEmpty()) return;
         mediaList.getFirst().setIsCoverImage(true);
         propertyDAO.update(property);
+    }
+
+    private static PropertyLocation getPropertyLocation(PropertyRequestDTO request, Property toUpdate) {
+        var location = toUpdate.getLocation();
+        if (location == null) {
+            location = new PropertyLocation();
+        }
+        location.setAddress(request.location().address());
+        location.setCountry(request.location().country());
+        location.setRegionID(request.location().regionID());
+        location.setDistrictID(request.location().districtID());
+        location.setMapLocation(request.location().mapLocation());
+        location.setPlaceID(request.location().placeID());
+        return location;
+    }
+    private List<String> getLocationList(PropertyLocation location) {
+        if (location == null) return List.of("", "", "");
+        return propertyDAO.getPropertyAddressShort(location.getId());
     }
 
 }

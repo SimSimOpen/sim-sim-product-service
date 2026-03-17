@@ -41,7 +41,6 @@ public class Property extends BaseEntity {
 
 
     //location details
-
     @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
     private PropertyLocation location;
 
@@ -66,6 +65,7 @@ public class Property extends BaseEntity {
                 ", price=" + price +
                 ", numberOfRooms=" + numberOfRooms +
                 ", area=" + area +
+                ", location=" + location +
                 ", medias=" + medias.stream().map(m -> m.getId() + ":" + m.getMediaURL()).toList() +
                 '}';
     }
