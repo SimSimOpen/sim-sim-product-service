@@ -6,8 +6,6 @@ import info.jemsit.common.dto.response.product.propeprty.PropertyResponseDTO;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
-import java.util.List;
-
 public interface PropertyService {
     String add(PropertyRequestDTO request);
 
@@ -24,4 +22,6 @@ public interface PropertyService {
     PropertyResponseDTO createPropertyDraft();
 
     void deletePropertyImage(Long id);
+
+    Page<PropertyResponseDTO> getAgentsAllProperties(Pageable pageable);
 }

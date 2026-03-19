@@ -1,6 +1,8 @@
 package info.jemsit.product_service.data.repository.property;
 
 import info.jemsit.product_service.data.model.property.Property;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
@@ -29,4 +31,6 @@ public interface PropertyRepository extends JpaRepository<Property, Long> {
             WHERE pl.id = :locationId
             """, nativeQuery = true)
     List<String> findShortAddressById(long locationId);
+
+    Page<Property> findByAgentID(Long id, Pageable pageable);
 }

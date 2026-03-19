@@ -75,4 +75,10 @@ public class PropertyDAOImpl implements PropertyDAO {
         log.info("Getting short address for property ID: {}", locationId);
         return propertyRepository.findShortAddressById(locationId);
     }
+
+    @Override
+    public Page<Property> findByAgentID(Long id, Pageable pageable) {
+        log.info("Finding properties by agent ID: {} with pagination: {}", id, pageable);
+        return propertyRepository.findByAgentID(id, pageable);
+    }
 }

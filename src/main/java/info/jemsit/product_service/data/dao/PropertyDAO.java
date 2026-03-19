@@ -20,4 +20,6 @@ public interface PropertyDAO {
 
     void deletePropertyMediaById(Long id);
     List<String> getPropertyAddressShort(long locationId);
+
+    Page<Property> findByAgentID(Long id, Pageable pageable);
 }

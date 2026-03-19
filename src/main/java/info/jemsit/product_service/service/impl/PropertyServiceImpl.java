@@ -1,8 +1,10 @@
 package info.jemsit.product_service.service.impl;
 
+import info.jemsit.common.UserContext;
 import info.jemsit.common.clients.auth.AuthServiceClient;
 import info.jemsit.common.clients.media.MediaServiceClient;
 import info.jemsit.common.data.enums.RabbitMQMessages;
+import info.jemsit.common.data.enums.Roles;
 import info.jemsit.common.data.enums.property.ListingStatus;
 import info.jemsit.common.dto.message.MediaUploaded;
 import info.jemsit.common.dto.request.product.property.AddPropertyImagesRequestDTO;
@@ -145,7 +147,8 @@ public class PropertyServiceImpl implements PropertyService {
         }
         log.info("Property after adding images:{} ", property);
         var updated = propertyDAO.update(property);
-        rabbitMQService.sendMessageToRabbitMQ(new MediaUploaded("1", RabbitMQMessages.MEDIA_UPDATE));
+        var userId =  authServiceClient.getUserDetails().id();
+        rabbitMQService.sendMessageToRabbitMQ(new MediaUploaded(userId.toString(), RabbitMQMessages.MEDIA_UPDATE));
         return propertyMapper.toDto(updated);
     }
 
@@ -171,7 +174,16 @@ public class PropertyServiceImpl implements PropertyService {
         if (media.getIsCoverImage()) {
             reAssignCoverImage(media.getProperty().getId());
         }
-        rabbitMQService.sendMessageToRabbitMQ(new MediaUploaded("1", RabbitMQMessages.MEDIA_UPDATE));
+        var userId =  authServiceClient.getUserDetails().id();
+        rabbitMQService.sendMessageToRabbitMQ(new MediaUploaded(userId.toString(), RabbitMQMessages.MEDIA_UPDATE));
+    }
+
+    @Override
+    public Page<PropertyResponseDTO> getAgentsAllProperties(Pageable pageable) {
+        var user = authServiceClient.getUserDetails();
+        boolean isAdmin = user.roles().stream().anyMatch(role -> role.equals(Roles.ADMIN));
+        Page<Property> properties = isAdmin ? propertyDAO.findAll(pageable) : propertyDAO.findByAgentID(user.id(), pageable);
+        return properties.map((p) -> propertyMapper.toDtoWithShortAddress(p, getLocationList(p.getLocation())));
     }
 
     private void reAssignCoverImage(long propertyId) {

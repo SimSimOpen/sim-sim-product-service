@@ -52,6 +52,11 @@ public class PropertyController {
         return ResponseEntity.ok(propertyService.getAll(pageable));
     }
 
+    @GetMapping("agents-all")
+    public ResponseEntity<?> getAllAgentProperty(Pageable pageable) {
+        return ResponseEntity.ok(propertyService.getAgentsAllProperties(pageable));
+    }
+
     @GetMapping("{id}")
     public ResponseEntity<?> getPropertyById(@PathVariable Long id) {
         return ResponseEntity.ok(propertyService.getById(id));
