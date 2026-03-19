@@ -18,5 +18,15 @@ public class PropertyAmenities {
     private Boolean hasGym;
     private Boolean hasSecurity;
     private Boolean hasElevator;
+    private Boolean hasWashingMachine;
+    private Boolean hasAirConditioning;
+    private Boolean hasInternet;
+    private Boolean hasRefrigerator;
+    private Boolean hasDishwasher;
+    private Boolean hasMicrowave;
+    private Boolean hasParkingSpace;
+    private Boolean hasTV;
+    private Boolean hasSatellite;
+    private Boolean hasFurniture;
 
 }

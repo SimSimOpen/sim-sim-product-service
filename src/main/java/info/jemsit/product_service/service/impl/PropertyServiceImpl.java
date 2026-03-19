@@ -1,15 +1,18 @@
 package info.jemsit.product_service.service.impl;
 
+import info.jemsit.common.clients.auth.AuthServiceClient;
 import info.jemsit.common.clients.media.MediaServiceClient;
 import info.jemsit.common.data.enums.RabbitMQMessages;
 import info.jemsit.common.data.enums.property.ListingStatus;
 import info.jemsit.common.dto.message.MediaUploaded;
 import info.jemsit.common.dto.request.product.property.AddPropertyImagesRequestDTO;
 import info.jemsit.common.dto.request.product.property.PropertyRequestDTO;
+import info.jemsit.common.dto.response.auth.UserDetailsResponseDTO;
 import info.jemsit.common.dto.response.product.propeprty.PropertyResponseDTO;
 import info.jemsit.common.exceptions.UserException;
 import info.jemsit.product_service.data.dao.PropertyDAO;
 import info.jemsit.product_service.data.model.property.Property;
+import info.jemsit.product_service.data.model.property.PropertyAmenities;
 import info.jemsit.product_service.data.model.property.PropertyLocation;
 import info.jemsit.product_service.data.model.property.PropertyMediaData;
 import info.jemsit.product_service.mapper.PropertyMapper;
@@ -32,6 +35,7 @@ public class PropertyServiceImpl implements PropertyService {
     private final PropertyDAO propertyDAO;
     private final PropertyMapper propertyMapper;
     private final MediaServiceClient mediaServiceClient;
+    private final AuthServiceClient authServiceClient;
     private final RabbitMQService rabbitMQService;
 
     @Override
@@ -72,13 +76,13 @@ public class PropertyServiceImpl implements PropertyService {
         if (request.type() != null) {
             toUpdate.setType(request.type());
         }
-        if(request.category() != null) {
+        if (request.category() != null) {
             toUpdate.setCategory(request.category());
         }
         if (request.listingStatus() != null) {
             toUpdate.setListingStatus(request.listingStatus());
         }
-        if(request.occupancyStatus() != null) {
+        if (request.occupancyStatus() != null) {
             toUpdate.setOccupancyStatus(request.occupancyStatus());
         }
         if (request.publish() != null && !request.publish().isEmpty()) {
@@ -88,10 +92,13 @@ public class PropertyServiceImpl implements PropertyService {
             var location = getPropertyLocation(request, toUpdate);
             toUpdate.setLocation(location);
         }
+        if (request.amenities() != null) {
+            var updatedAmenities = setChanges(request, toUpdate);
+            toUpdate.setAmenities(updatedAmenities);
+        }
         Property updatedProperty = propertyDAO.update(toUpdate);
         return propertyMapper.toDtoWithShortAddress(updatedProperty, getLocationList(updatedProperty.getLocation()));
     }
-
 
 
     @Override
@@ -147,6 +154,9 @@ public class PropertyServiceImpl implements PropertyService {
     public PropertyResponseDTO createPropertyDraft() {
         Property property = new Property();
         property.setListingStatus(ListingStatus.DRAFT);
+        UserDetailsResponseDTO userDetails = authServiceClient.getUserDetails();
+        property.setAgentID(userDetails.id());
+        property.setAgent(userDetails.username());
         propertyDAO.save(property);
         return propertyMapper.toDto(property);
     }
@@ -186,9 +196,34 @@ public class PropertyServiceImpl implements PropertyService {
         location.setPlaceID(request.location().placeID());
         return location;
     }
+
     private List<String> getLocationList(PropertyLocation location) {
         if (location == null) return List.of("", "", "");
         return propertyDAO.getPropertyAddressShort(location.getId());
+    }
+
+    private PropertyAmenities setChanges(PropertyRequestDTO request, Property toUpdate) {
+        var amenities = toUpdate.getAmenities();
+        if (amenities == null) {
+            amenities = new PropertyAmenities();
+        }
+        amenities.setHasParking(request.amenities().hasParking());
+        amenities.setHasElevator(request.amenities().hasElevator());
+        amenities.setHasGarden(request.amenities().hasGarden());
+        amenities.setHasSwimmingPool(request.amenities().hasSwimmingPool());
+        amenities.setHasSecurity(request.amenities().hasSecurity());
+        amenities.setHasGym(request.amenities().hasGym());
+        amenities.setHasWashingMachine(request.amenities().hasWashingMachine());
+        amenities.setHasAirConditioning(request.amenities().hasAirConditioning());
+        amenities.setHasInternet(request.amenities().hasInternet());
+        amenities.setHasRefrigerator(request.amenities().hasRefrigerator());
+        amenities.setHasDishwasher(request.amenities().hasDishwasher());
+        amenities.setHasMicrowave(request.amenities().hasMicrowave());
+        amenities.setHasParkingSpace(request.amenities().hasParkingSpace());
+        amenities.setHasTV(request.amenities().hasTV());
+        amenities.setHasSatellite(request.amenities().hasSatellite());
+        amenities.setHasFurniture(request.amenities().hasFurniture());
+        return amenities;
     }
 
 }

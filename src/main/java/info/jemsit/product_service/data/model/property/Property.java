@@ -17,7 +17,7 @@ import java.util.List;
 public class Property extends BaseEntity {
     //general details
     private String title;
-    private Double description;
+    private String description;
     private BigDecimal price;
     private Integer numberOfRooms;
     private Double area;
