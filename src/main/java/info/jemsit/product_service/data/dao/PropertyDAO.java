@@ -22,4 +22,6 @@ public interface PropertyDAO {
     List<String> getPropertyAddressShort(long locationId);
 
     Page<Property> findByAgentID(Long id, Pageable pageable);
+
+    Page<Property> findAllPublished(Pageable pageable);
 }

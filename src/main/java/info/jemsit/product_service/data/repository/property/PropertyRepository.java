@@ -33,4 +33,7 @@ public interface PropertyRepository extends JpaRepository<Property, Long> {
     List<String> findShortAddressById(long locationId);
 
     Page<Property> findByAgentID(Long id, Pageable pageable);
+
+    @Query(value = "SELECT * FROM properties WHERE listing_status = 'ACTIVE'", nativeQuery = true)
+    Page<Property> findAllPublished(Pageable pageable);
 }

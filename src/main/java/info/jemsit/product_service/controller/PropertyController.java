@@ -51,6 +51,10 @@ public class PropertyController {
     public ResponseEntity<?> getAllProperty(Pageable pageable) {
         return ResponseEntity.ok(propertyService.getAll(pageable));
     }
+    @GetMapping("all/published")
+    public ResponseEntity<?> getAllPublishedProperty(Pageable pageable) {
+        return ResponseEntity.ok(propertyService.getAllPublished(pageable));
+    }
 
     @GetMapping("agents-all")
     public ResponseEntity<?> getAllAgentProperty(Pageable pageable) {

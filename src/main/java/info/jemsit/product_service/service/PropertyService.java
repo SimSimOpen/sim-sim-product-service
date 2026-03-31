@@ -24,4 +24,6 @@ public interface PropertyService {
     void deletePropertyImage(Long id);
 
     Page<PropertyResponseDTO> getAgentsAllProperties(Pageable pageable);
+
+    Page<PropertyResponseDTO> getAllPublished(Pageable pageable);
 }

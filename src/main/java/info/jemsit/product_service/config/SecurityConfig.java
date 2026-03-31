@@ -39,7 +39,7 @@ public class SecurityConfig {
                 )
                 .addFilterBefore(tokenFilter, UsernamePasswordAuthenticationFilter.class)
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/v1/property/all").permitAll()
+                        .requestMatchers("/v1/property/all/published").permitAll()
                         .anyRequest().authenticated()
                 )
                 .oauth2ResourceServer(oauth2 -> oauth2

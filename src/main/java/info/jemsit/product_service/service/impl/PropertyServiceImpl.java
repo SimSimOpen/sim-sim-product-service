@@ -186,6 +186,12 @@ public class PropertyServiceImpl implements PropertyService {
         return properties.map((p) -> propertyMapper.toDtoWithShortAddress(p, getLocationList(p.getLocation())));
     }
 
+    @Override
+    public Page<PropertyResponseDTO> getAllPublished(Pageable pageable) {
+        Page<Property> properties = propertyDAO.findAllPublished(pageable);
+        return properties.map((p) -> propertyMapper.toDtoWithShortAddress(p, getLocationList(p.getLocation())));
+    }
+
     private void reAssignCoverImage(long propertyId) {
         var property = propertyDAO.findById(propertyId)
                 .orElseThrow(() -> new UserException("Property not found with id: " + propertyId));

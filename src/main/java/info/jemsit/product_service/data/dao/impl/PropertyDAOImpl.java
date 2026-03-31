@@ -81,4 +81,10 @@ public class PropertyDAOImpl implements PropertyDAO {
         log.info("Finding properties by agent ID: {} with pagination: {}", id, pageable);
         return propertyRepository.findByAgentID(id, pageable);
     }
+
+    @Override
+    public Page<Property> findAllPublished(Pageable pageable) {
+        log.info("Finding all published properties with pagination: {}", pageable);
+        return propertyRepository.findAllPublished(pageable);
+    }
 }
