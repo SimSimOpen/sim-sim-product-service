@@ -20,8 +20,12 @@ public class Property extends BaseEntity {
     private String description;
     private BigDecimal price;
     private Integer numberOfRooms;
+    private Integer floor;
+    private Integer totalFloors;
     private Double area;
     private String publish;
+    @Column(name = "view_count" , nullable = false , columnDefinition = "bigint default 0")
+    private long viewCount ;
 
     @Enumerated(EnumType.STRING)
     private PropertyCategory category;

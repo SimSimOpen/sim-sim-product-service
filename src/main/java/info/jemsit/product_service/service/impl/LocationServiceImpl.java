@@ -1,13 +1,12 @@
 package info.jemsit.product_service.service.impl;
 
+import info.jemsit.common.dto.response.product.propeprty.DistrictsResponseDTO;
+import info.jemsit.common.dto.response.product.propeprty.PlacesResponseDTO;
+import info.jemsit.common.dto.response.product.propeprty.RegionsResponseDTO;
 import info.jemsit.product_service.data.dao.LocationDAO;
 import info.jemsit.product_service.data.model.location.Place;
 import info.jemsit.product_service.mapper.LocationMapper;
-import info.jemsit.product_service.service.DistrictsResponseDTO;
 import info.jemsit.product_service.service.LocationService;
-import info.jemsit.product_service.service.PlacesResponseDTO;
-import info.jemsit.product_service.service.RegionsResponseDTO;
-import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
