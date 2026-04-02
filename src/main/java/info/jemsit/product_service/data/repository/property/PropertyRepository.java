@@ -11,23 +11,28 @@ import java.util.Objects;
 
 public interface PropertyRepository extends JpaRepository<Property, Long> {
     @Query(value = """
-            SELECT r.name_uz
+            SELECT r.name_ru
             FROM property_locations pl
             LEFT JOIN regions r ON r.id = pl.region_id
             WHERE pl.id = :locationId
             
             UNION ALL
             
-            SELECT d.name_uz
+            SELECT d.name_ru
             FROM property_locations pl
             LEFT JOIN districts d ON d.id = pl.district_id
             WHERE pl.id = :locationId
             
             UNION ALL
             
-            SELECT p.name_uz
+            SELECT p.name_ru
             FROM property_locations pl
             LEFT JOIN villages p ON p.id = pl.place_id
+            WHERE pl.id = :locationId
+            
+            UNION ALL
+            SELECT pl.address
+            FROM property_locations pl
             WHERE pl.id = :locationId
             """, nativeQuery = true)
     List<String> findShortAddressById(long locationId);

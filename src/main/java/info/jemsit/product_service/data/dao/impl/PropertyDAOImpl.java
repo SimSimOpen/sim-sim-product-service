@@ -71,7 +71,6 @@ public class PropertyDAOImpl implements PropertyDAO {
 
     @Override
     public List<String> getPropertyAddressShort(long locationId) {
-
         log.info("Getting short address for property ID: {}", locationId);
         return propertyRepository.findShortAddressById(locationId);
     }

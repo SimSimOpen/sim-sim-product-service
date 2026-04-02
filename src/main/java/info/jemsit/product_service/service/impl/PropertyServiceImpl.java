@@ -217,7 +217,7 @@ public class PropertyServiceImpl implements PropertyService {
 
     private List<String> getLocationList(PropertyLocation location) {
         if (location == null) return List.of("", "", "");
-        return propertyDAO.getPropertyAddressShort(location.getId());
+        return propertyDAO.getPropertyAddressShort(location.getId());  // { region, district, place, address }
     }
 
     private PropertyAmenities setChanges(PropertyRequestDTO request, Property toUpdate) {
