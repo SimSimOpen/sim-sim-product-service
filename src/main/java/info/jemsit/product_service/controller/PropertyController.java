@@ -65,6 +65,10 @@ public class PropertyController {
     public ResponseEntity<?> getPropertyById(@PathVariable Long id) {
         return ResponseEntity.ok(propertyService.getById(id));
     }
+    @GetMapping("property-media-count/{property-id}")
+    public Integer getPropertyMediaCount(@PathVariable("property-id") Long propertyId) {
+        return propertyService.getPropertyMediaCount(propertyId);
+    }
 
     @DeleteMapping("{id}")
     public ResponseEntity<?> deletePropertyById(@PathVariable Long id) {

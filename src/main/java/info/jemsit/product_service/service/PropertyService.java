@@ -26,4 +26,6 @@ public interface PropertyService {
     Page<PropertyResponseDTO> getAgentsAllProperties(Pageable pageable);
 
     Page<PropertyResponseDTO> getAllPublished(Pageable pageable);
+
+    Integer getPropertyMediaCount(Long propertyId);
 }

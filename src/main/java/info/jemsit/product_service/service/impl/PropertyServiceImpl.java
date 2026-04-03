@@ -198,6 +198,13 @@ public class PropertyServiceImpl implements PropertyService {
         return properties.map((p) -> propertyMapper.toDtoWithShortAddress(p, getLocationList(p.getLocation())));
     }
 
+    @Override
+    public Integer getPropertyMediaCount(Long propertyId) {
+        var property = propertyDAO.findById(propertyId)
+                .orElseThrow(() -> new UserException("Property not found with id: " + propertyId));
+        return property.getMedias().size();
+    }
+
     private void reAssignCoverImage(long propertyId) {
         var property = propertyDAO.findById(propertyId)
                 .orElseThrow(() -> new UserException("Property not found with id: " + propertyId));
