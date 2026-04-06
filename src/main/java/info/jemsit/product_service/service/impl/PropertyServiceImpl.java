@@ -1,5 +1,6 @@
 package info.jemsit.product_service.service.impl;
 
+import info.jemsit.common.UserContext;
 import info.jemsit.common.clients.auth.AuthServiceClient;
 import info.jemsit.common.clients.media.MediaServiceClient;
 import info.jemsit.common.data.enums.RabbitMQMessages;
@@ -153,7 +154,7 @@ public class PropertyServiceImpl implements PropertyService {
         }
         log.info("Property after adding images:{} ", property);
         var updated = propertyDAO.update(property);
-        var userId =  authServiceClient.getUserDetails().id();
+        var userId = authServiceClient.getUserDetails().id();
         rabbitMQService.sendMessageToRabbitMQ(new MediaUploaded(userId.toString(), RabbitMQMessages.MEDIA_UPDATE));
         return propertyMapper.toDto(updated);
     }
@@ -180,7 +181,7 @@ public class PropertyServiceImpl implements PropertyService {
         if (media.getIsCoverImage()) {
             reAssignCoverImage(media.getProperty().getId());
         }
-        var userId =  authServiceClient.getUserDetails().id();
+        var userId = authServiceClient.getUserDetails().id();
         rabbitMQService.sendMessageToRabbitMQ(new MediaUploaded(userId.toString(), RabbitMQMessages.MEDIA_UPDATE));
     }
 
@@ -207,7 +208,9 @@ public class PropertyServiceImpl implements PropertyService {
 
     @Override
     public PropertiesStats getPropertiesStats() {
-        return propertyDAO.getPropertiesStats();
+        var user = authServiceClient.getUserDetails();
+        boolean isAdmin = user.roles().stream().anyMatch(role -> role.equals(Roles.ADMIN));
+        return isAdmin ? propertyDAO.getPropertiesStats() : propertyDAO.getPropertiesStatsByAgentId(user.id());
     }
 
     private void reAssignCoverImage(long propertyId) {

@@ -27,4 +27,5 @@ public interface PropertyDAO {
     Page<Property> findAllPublished(Pageable pageable);
 
     PropertiesStats getPropertiesStats();
+    PropertiesStats getPropertiesStatsByAgentId(Long agentId);
 }

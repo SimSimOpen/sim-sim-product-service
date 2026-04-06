@@ -47,6 +47,8 @@ public class PropertyController {
         return ResponseEntity.ok(propertyService.update(id, request));
     }
 
+
+    //This method for client landing page
     @GetMapping("all")
     public ResponseEntity<?> getAllProperty(Pageable pageable) {
         return ResponseEntity.ok(propertyService.getAll(pageable));
@@ -56,6 +58,8 @@ public class PropertyController {
         return ResponseEntity.ok(propertyService.getAllPublished(pageable));
     }
 
+
+    //This method for admin panel
     @GetMapping("agents-all")
     public ResponseEntity<?> getAllAgentProperty(Pageable pageable) {
         return ResponseEntity.ok(propertyService.getAgentsAllProperties(pageable));
@@ -78,4 +82,5 @@ public class PropertyController {
     public ResponseEntity<?> getPropertyStats() {
         return ResponseEntity.ok(propertyService.getPropertiesStats());
     }
+//    @GetMapping()
 }

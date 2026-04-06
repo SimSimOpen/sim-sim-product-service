@@ -93,4 +93,10 @@ public class PropertyDAOImpl implements PropertyDAO {
         log.info("Getting properties statistics");
         return propertyRepository.getPropertiesStats();
     }
+
+    @Override
+    public PropertiesStats getPropertiesStatsByAgentId(Long agentId) {
+        log.info("Getting properties statistics for agent ID: {}", agentId);
+        return propertyRepository.getPropertiesStatsByAgentId(agentId);
+    }
 }

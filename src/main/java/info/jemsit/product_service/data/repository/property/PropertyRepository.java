@@ -6,6 +6,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 import java.util.List;
 
@@ -50,4 +51,12 @@ public interface PropertyRepository extends JpaRepository<Property, Long> {
             "SUM(CASE WHEN p.listingStatus = 'DRAFT' THEN 1 ELSE 0 END)) " +
             "FROM Property p")
     PropertiesStats getPropertiesStats();
+
+    @Query("SELECT new info.jemsit.common.dto.response.product.propeprty.PropertiesStats(" +
+            "COUNT(p), " +
+            "COALESCE(SUM(CASE WHEN p.listingStatus = 'ACTIVE' THEN 1 ELSE 0 END), 0), " +
+            "COALESCE(SUM(CASE WHEN p.occupancyStatus = 'RENTED' THEN 1 ELSE 0 END), 0), " +
+            "COALESCE(SUM(CASE WHEN p.listingStatus = 'DRAFT' THEN 1 ELSE 0 END), 0)) " +
+            "FROM Property p WHERE p.agentID = :agentId")
+    PropertiesStats getPropertiesStatsByAgentId(@Param("agentId") Long agentId);
 }
