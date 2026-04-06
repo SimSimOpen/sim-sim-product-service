@@ -74,4 +74,8 @@ public class PropertyController {
     public ResponseEntity<?> deletePropertyById(@PathVariable Long id) {
         return ResponseEntity.ok(propertyService.deleteById(id));
     }
+    @GetMapping("stats")
+    public ResponseEntity<?> getPropertyStats() {
+        return ResponseEntity.ok(propertyService.getPropertiesStats());
+    }
 }

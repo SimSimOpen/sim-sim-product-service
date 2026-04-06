@@ -1,5 +1,6 @@
 package info.jemsit.product_service.data.repository.property;
 
+import info.jemsit.common.dto.response.product.propeprty.PropertiesStats;
 import info.jemsit.product_service.data.model.property.Property;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -7,7 +8,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
 import java.util.List;
-import java.util.Objects;
 
 public interface PropertyRepository extends JpaRepository<Property, Long> {
     @Query(value = """
@@ -41,4 +41,13 @@ public interface PropertyRepository extends JpaRepository<Property, Long> {
 
     @Query(value = "SELECT * FROM properties WHERE listing_status = 'ACTIVE'", nativeQuery = true)
     Page<Property> findAllPublished(Pageable pageable);
+
+
+    @Query("SELECT  new info.jemsit.common.dto.response.product.propeprty.PropertiesStats(" +
+            "COUNT(p), " +
+            "SUM(CASE WHEN p.listingStatus = 'ACTIVE' THEN 1 ELSE 0 END), " +
+            "SUM(CASE WHEN p.occupancyStatus = 'RENTED' THEN 1 ELSE 0 END)," +
+            "SUM(CASE WHEN p.listingStatus = 'DRAFT' THEN 1 ELSE 0 END)) " +
+            "FROM Property p")
+    PropertiesStats getPropertiesStats();
 }

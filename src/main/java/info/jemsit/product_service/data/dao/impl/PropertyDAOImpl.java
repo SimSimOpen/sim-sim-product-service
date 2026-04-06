@@ -1,5 +1,6 @@
 package info.jemsit.product_service.data.dao.impl;
 
+import info.jemsit.common.dto.response.product.propeprty.PropertiesStats;
 import info.jemsit.product_service.data.dao.PropertyDAO;
 import info.jemsit.product_service.data.model.property.Property;
 import info.jemsit.product_service.data.model.property.PropertyMediaData;
@@ -85,5 +86,11 @@ public class PropertyDAOImpl implements PropertyDAO {
     public Page<Property> findAllPublished(Pageable pageable) {
         log.info("Finding all published properties with pagination: {}", pageable);
         return propertyRepository.findAllPublished(pageable);
+    }
+
+    @Override
+    public PropertiesStats getPropertiesStats() {
+        log.info("Getting properties statistics");
+        return propertyRepository.getPropertiesStats();
     }
 }

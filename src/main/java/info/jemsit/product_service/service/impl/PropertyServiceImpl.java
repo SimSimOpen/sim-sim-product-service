@@ -1,6 +1,5 @@
 package info.jemsit.product_service.service.impl;
 
-import info.jemsit.common.UserContext;
 import info.jemsit.common.clients.auth.AuthServiceClient;
 import info.jemsit.common.clients.media.MediaServiceClient;
 import info.jemsit.common.data.enums.RabbitMQMessages;
@@ -10,6 +9,7 @@ import info.jemsit.common.dto.message.MediaUploaded;
 import info.jemsit.common.dto.request.product.property.AddPropertyImagesRequestDTO;
 import info.jemsit.common.dto.request.product.property.PropertyRequestDTO;
 import info.jemsit.common.dto.response.auth.UserDetailsResponseDTO;
+import info.jemsit.common.dto.response.product.propeprty.PropertiesStats;
 import info.jemsit.common.dto.response.product.propeprty.PropertyResponseDTO;
 import info.jemsit.common.exceptions.UserException;
 import info.jemsit.product_service.data.dao.PropertyDAO;
@@ -203,6 +203,11 @@ public class PropertyServiceImpl implements PropertyService {
         var property = propertyDAO.findById(propertyId)
                 .orElseThrow(() -> new UserException("Property not found with id: " + propertyId));
         return property.getMedias().size();
+    }
+
+    @Override
+    public PropertiesStats getPropertiesStats() {
+        return propertyDAO.getPropertiesStats();
     }
 
     private void reAssignCoverImage(long propertyId) {

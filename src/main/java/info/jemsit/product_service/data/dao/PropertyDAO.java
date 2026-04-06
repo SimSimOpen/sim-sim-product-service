@@ -1,5 +1,6 @@
 package info.jemsit.product_service.data.dao;
 
+import info.jemsit.common.dto.response.product.propeprty.PropertiesStats;
 import info.jemsit.product_service.data.model.property.Property;
 import info.jemsit.product_service.data.model.property.PropertyMediaData;
 import org.springframework.data.domain.Page;
@@ -24,4 +25,6 @@ public interface PropertyDAO {
     Page<Property> findByAgentID(Long id, Pageable pageable);
 
     Page<Property> findAllPublished(Pageable pageable);
+
+    PropertiesStats getPropertiesStats();
 }
