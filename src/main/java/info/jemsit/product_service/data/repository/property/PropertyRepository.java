@@ -60,4 +60,63 @@ public interface PropertyRepository extends JpaRepository<Property, Long>, JpaSp
             "COALESCE(SUM(CASE WHEN p.listingStatus = 'DRAFT' THEN 1 ELSE 0 END), 0)) " +
             "FROM Property p WHERE p.agentID = :agentId")
     PropertiesStats getPropertiesStatsByAgentId(@Param("agentId") Long agentId);
+
+
+    @Query(value = """
+        SELECT p.* FROM properties p
+        JOIN property_locations l ON p.location_id = l.id
+        LEFT JOIN regions r ON r.id = l.region_id
+        LEFT JOIN districts d ON d.id = l.district_id
+        LEFT JOIN villages v ON v.id = l.place_id
+        WHERE
+            to_tsvector('simple',
+                COALESCE(p.title, '') || ' ' ||
+                COALESCE(p.description, '') || ' ' ||
+                COALESCE(l.address, '') || ' ' ||
+                COALESCE(r.name_ru, '') || ' ' ||
+                COALESCE(r.name_uz, '') || ' ' ||
+                COALESCE(d.name_ru, '') || ' ' ||
+                COALESCE(d.name_uz, '') || ' ' ||
+                COALESCE(v.name_ru, '') || ' ' ||
+                COALESCE(v.name_uz, '')
+            ) @@ plainto_tsquery('simple', :search)
+            AND (:listingStatus IS NULL OR p.listing_status = :listingStatus)
+            AND (:type IS NULL OR p.type = :type)
+            AND (:category IS NULL OR p.category = :category)
+            AND (:offerType IS NULL OR p.offer_type = :offerType)
+            AND (:occupancyStatus IS NULL OR p.occupancy_status = :occupancyStatus)
+        """, countQuery = """
+        SELECT COUNT(p.id) FROM properties p
+        JOIN property_locations l ON p.location_id = l.id
+        LEFT JOIN regions r ON r.id = l.region_id
+        LEFT JOIN districts d ON d.id = l.district_id
+        LEFT JOIN villages v ON v.id = l.place_id
+        WHERE
+            to_tsvector('simple',
+                COALESCE(p.title, '') || ' ' ||
+                COALESCE(p.description, '') || ' ' ||
+                COALESCE(l.address, '') || ' ' ||
+                COALESCE(r.name_ru, '') || ' ' ||
+                COALESCE(r.name_uz, '') || ' ' ||
+                COALESCE(d.name_ru, '') || ' ' ||
+                COALESCE(d.name_uz, '') || ' ' ||
+                COALESCE(v.name_ru, '') || ' ' ||
+                COALESCE(v.name_uz, '')
+            ) @@ plainto_tsquery('simple', :search)
+            AND (:listingStatus IS NULL OR p.listing_status = :listingStatus)
+            AND (:type IS NULL OR p.type = :type)
+            AND (:category IS NULL OR p.category = :category)
+            AND (:offerType IS NULL OR p.offer_type = :offerType)
+            AND (:occupancyStatus IS NULL OR p.occupancy_status = :occupancyStatus)
+        """, nativeQuery = true)
+    Page<Property> search(
+            @Param("search") String search,
+            @Param("listingStatus") String listingStatus,
+            @Param("type") String type,
+            @Param("category") String category,
+            @Param("offerType") String offerType,
+            @Param("occupancyStatus") String occupancyStatus,
+            Pageable pageable
+    );
+
 }

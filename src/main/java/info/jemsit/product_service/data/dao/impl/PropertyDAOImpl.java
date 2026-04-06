@@ -106,4 +106,12 @@ public class PropertyDAOImpl implements PropertyDAO {
         log.info("Filtering properties with specification: {} and pagination: {}", specification, pageable);
         return propertyRepository.findAll(specification, pageable);
     }
+
+    @Override
+    public Page<Property> search(String search, String listingStatus, String type, String category, String offerType, String occupancyStatus, Pageable pageable) {
+
+        log.info("Searching properties with search: {}, listingStatus: {}, type: {}, category: {}, offerType: {}, occupancyStatus: {} and pagination: {}",
+                search, listingStatus, type, category, offerType, occupancyStatus, pageable);
+        return propertyRepository.search(search, listingStatus, type, category, offerType, occupancyStatus, pageable);
+    }
 }

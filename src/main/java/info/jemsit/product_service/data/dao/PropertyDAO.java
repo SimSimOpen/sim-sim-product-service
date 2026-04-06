@@ -31,4 +31,6 @@ public interface PropertyDAO {
     PropertiesStats getPropertiesStatsByAgentId(Long agentId);
 
     Page<Property> filter(Specification<Property> specification, Pageable pageable);
+
+    Page<Property> search(String search, String listingStatus, String type, String category, String offerType, String occupancyStatus, Pageable pageable);
 }

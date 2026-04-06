@@ -60,6 +60,7 @@ dependencies {
     implementation 'org.springframework.security:spring-security-oauth2-jose'
     implementation 'org.springframework.boot:spring-boot-starter-amqp'
     testImplementation 'org.springframework.amqp:spring-rabbit-test'
+    implementation 'org.liquibase:liquibase-core'
 }
 
 dependencyManagement {
