@@ -1,6 +1,5 @@
 package info.jemsit.product_service.service.impl;
 
-import info.jemsit.common.UserContext;
 import info.jemsit.common.clients.auth.AuthServiceClient;
 import info.jemsit.common.clients.media.MediaServiceClient;
 import info.jemsit.common.data.enums.RabbitMQMessages;
@@ -21,7 +20,6 @@ import info.jemsit.product_service.data.model.property.PropertyMediaData;
 import info.jemsit.product_service.mapper.PropertyMapper;
 import info.jemsit.product_service.service.PropertyService;
 import info.jemsit.product_service.service.RabbitMQService;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -31,15 +29,23 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 
 @Service
-@RequiredArgsConstructor
 @Slf4j
-public class PropertyServiceImpl implements PropertyService {
+public class PropertyServiceImpl extends PropertyFilterServiceImpl implements PropertyService {
 
     private final PropertyDAO propertyDAO;
     private final PropertyMapper propertyMapper;
     private final MediaServiceClient mediaServiceClient;
     private final AuthServiceClient authServiceClient;
     private final RabbitMQService rabbitMQService;
+
+    public PropertyServiceImpl(PropertyDAO propertyDAO, PropertyMapper propertyMapper, MediaServiceClient mediaServiceClient, AuthServiceClient authServiceClient, RabbitMQService rabbitMQService) {
+        super(propertyDAO, propertyMapper, mediaServiceClient, authServiceClient, rabbitMQService);
+        this.propertyDAO = propertyDAO;
+        this.propertyMapper = propertyMapper;
+        this.mediaServiceClient = mediaServiceClient;
+        this.authServiceClient = authServiceClient;
+        this.rabbitMQService = rabbitMQService;
+    }
 
     @Override
     public String add(PropertyRequestDTO request) {
@@ -213,6 +219,7 @@ public class PropertyServiceImpl implements PropertyService {
         return isAdmin ? propertyDAO.getPropertiesStats() : propertyDAO.getPropertiesStatsByAgentId(user.id());
     }
 
+
     private void reAssignCoverImage(long propertyId) {
         var property = propertyDAO.findById(propertyId)
                 .orElseThrow(() -> new UserException("Property not found with id: " + propertyId));
@@ -234,11 +241,6 @@ public class PropertyServiceImpl implements PropertyService {
         location.setMapLocation(request.location().mapLocation());
         location.setPlaceID(request.location().placeID());
         return location;
-    }
-
-    private List<String> getLocationList(PropertyLocation location) {
-        if (location == null) return List.of("", "", "");
-        return propertyDAO.getPropertyAddressShort(location.getId());  // { region, district, place, address }
     }
 
     private PropertyAmenities setChanges(PropertyRequestDTO request, Property toUpdate) {

@@ -82,5 +82,13 @@ public class PropertyController {
     public ResponseEntity<?> getPropertyStats() {
         return ResponseEntity.ok(propertyService.getPropertiesStats());
     }
-//    @GetMapping()
+    @GetMapping("filter")
+    public ResponseEntity<?> filterProperties(
+            PropertyFilterRequestDTO filterRequest,
+            Pageable pageable
+    ) {
+        System.out.println("Filter Request: " + filterRequest);
+        System.out.println("Pageable: " + pageable);
+        return ResponseEntity.ok(propertyService.filterProperties(filterRequest, pageable));
+    }
 }

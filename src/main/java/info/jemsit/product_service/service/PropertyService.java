@@ -7,7 +7,7 @@ import info.jemsit.common.dto.response.product.propeprty.PropertyResponseDTO;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
-public interface PropertyService {
+public interface PropertyService extends PropertyFilterService {
     String add(PropertyRequestDTO request);
 
     PropertyResponseDTO update(Long id, PropertyRequestDTO request);
