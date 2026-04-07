@@ -219,6 +219,14 @@ public class PropertyServiceImpl extends PropertyFilterServiceImpl implements Pr
         return isAdmin ? propertyDAO.getPropertiesStats() : propertyDAO.getPropertiesStatsByAgentId(user.id());
     }
 
+    @Override
+    public long  incrementViews(Long id) {
+        propertyDAO.findById(id)
+                .orElseThrow(() -> new UserException("Property not found with id: " + id));
+        propertyDAO.updateViewCount(id);
+        return propertyDAO.getViewCount(id);
+    }
+
 
     private void reAssignCoverImage(long propertyId) {
         var property = propertyDAO.findById(propertyId)

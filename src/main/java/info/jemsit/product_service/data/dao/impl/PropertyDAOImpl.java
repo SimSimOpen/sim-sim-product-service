@@ -114,4 +114,17 @@ public class PropertyDAOImpl implements PropertyDAO {
                 search, listingStatus, type, category, offerType, occupancyStatus, pageable);
         return propertyRepository.search(search, listingStatus, type, category, offerType, occupancyStatus, pageable);
     }
+
+    @Override
+    @Transactional
+    public void updateViewCount(long propertyId) {
+        log.info("Updating view count for property ID: {}", propertyId);
+        propertyRepository.incrementViewCount(propertyId);
+    }
+
+    @Override
+    public long getViewCount(Long id) {
+        log.info("Getting view count for property ID: {}", id);
+        return propertyRepository.findViewCountByPropertyId(id);
+    }
 }

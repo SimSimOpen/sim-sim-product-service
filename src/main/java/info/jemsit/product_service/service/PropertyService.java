@@ -31,4 +31,6 @@ public interface PropertyService extends PropertyFilterService {
     Integer getPropertyMediaCount(Long propertyId);
 
     PropertiesStats getPropertiesStats();
+
+    long incrementViews(Long id);
 }

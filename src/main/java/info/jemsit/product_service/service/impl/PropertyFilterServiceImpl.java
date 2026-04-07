@@ -2,8 +2,8 @@ package info.jemsit.product_service.service.impl;
 
 import info.jemsit.common.clients.auth.AuthServiceClient;
 import info.jemsit.common.clients.media.MediaServiceClient;
+import info.jemsit.common.dto.request.product.property.PropertyFilterRequestDTO;
 import info.jemsit.common.dto.response.product.propeprty.PropertyResponseDTO;
-import info.jemsit.product_service.controller.PropertyFilterRequestDTO;
 import info.jemsit.product_service.data.dao.PropertyDAO;
 import info.jemsit.product_service.data.model.property.Property;
 import info.jemsit.product_service.data.model.property.PropertyLocation;

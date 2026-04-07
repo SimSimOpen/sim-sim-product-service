@@ -6,6 +6,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
@@ -119,4 +120,10 @@ public interface PropertyRepository extends JpaRepository<Property, Long>, JpaSp
             Pageable pageable
     );
 
+    @Modifying
+    @Query("UPDATE Property p SET p.viewCount = p.viewCount + 1 WHERE p.id = :id")
+    void incrementViewCount(@Param("id") Long id);
+
+    @Query("SELECT p.viewCount FROM Property p WHERE p.id = :id")
+    long findViewCountByPropertyId(@Param("id") Long id);
 }

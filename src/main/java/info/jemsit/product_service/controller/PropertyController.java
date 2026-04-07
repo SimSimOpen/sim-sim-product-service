@@ -1,6 +1,7 @@
 package info.jemsit.product_service.controller;
 
 import info.jemsit.common.dto.request.product.property.AddPropertyImagesRequestDTO;
+import info.jemsit.common.dto.request.product.property.PropertyFilterRequestDTO;
 import info.jemsit.common.dto.request.product.property.PropertyRequestDTO;
 import info.jemsit.product_service.service.PropertyService;
 import jakarta.validation.Valid;
@@ -58,6 +59,10 @@ public class PropertyController {
         return ResponseEntity.ok(propertyService.getAllPublished(pageable));
     }
 
+    @PostMapping("{id}/views")
+    public ResponseEntity<?> incrementPropertyViews(@PathVariable Long id) {
+        return ResponseEntity.ok(propertyService.incrementViews(id));
+    }
 
     //This method for admin panel
     @GetMapping("agents-all")

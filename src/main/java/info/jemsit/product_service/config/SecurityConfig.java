@@ -26,7 +26,7 @@ import java.util.Base64;
 @RequiredArgsConstructor
 public class SecurityConfig {
     @Value("${jwt.secret}")
-    private  String SECRET_KEY;
+    private String SECRET_KEY;
 
     private final TokenFilter tokenFilter;
 
@@ -39,7 +39,7 @@ public class SecurityConfig {
                 )
                 .addFilterBefore(tokenFilter, UsernamePasswordAuthenticationFilter.class)
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/v1/property/all/published", "/v1/property/filter").permitAll()
+                        .requestMatchers("/v1/property/all/published", "/v1/property/filter", "/v1/property/*/views").permitAll()
                         .anyRequest().authenticated()
                 )
                 .oauth2ResourceServer(oauth2 -> oauth2
@@ -52,14 +52,15 @@ public class SecurityConfig {
     }
 
     @Bean
-    public JwtAuthenticationConverter jwtAuthenticationConverter(){
-        JwtGrantedAuthoritiesConverter converter=new JwtGrantedAuthoritiesConverter();
+    public JwtAuthenticationConverter jwtAuthenticationConverter() {
+        JwtGrantedAuthoritiesConverter converter = new JwtGrantedAuthoritiesConverter();
         converter.setAuthoritiesClaimName("roles");
         converter.setAuthorityPrefix("");
-        JwtAuthenticationConverter jwtAuthenticationConverter=new JwtAuthenticationConverter();
+        JwtAuthenticationConverter jwtAuthenticationConverter = new JwtAuthenticationConverter();
         jwtAuthenticationConverter.setJwtGrantedAuthoritiesConverter(converter);
         return jwtAuthenticationConverter;
     }
+
     @Bean
     public JwtDecoder jwtDecoder() {
         SecretKey secretKey = new SecretKeySpec(
