@@ -1,5 +1,6 @@
 package info.jemsit.product_service.service.impl;
 
+import info.jemsit.common.UserContext;
 import info.jemsit.common.clients.auth.AuthServiceClient;
 import info.jemsit.common.clients.media.MediaServiceClient;
 import info.jemsit.common.data.enums.RabbitMQMessages;
@@ -193,9 +194,8 @@ public class PropertyServiceImpl extends PropertyFilterServiceImpl implements Pr
 
     @Override
     public Page<PropertyResponseDTO> getAgentsAllProperties(Pageable pageable) {
-        var user = authServiceClient.getUserDetails();
-        boolean isAdmin = user.roles().stream().anyMatch(role -> role.equals(Roles.ADMIN));
-        Page<Property> properties = isAdmin ? propertyDAO.findAll(pageable) : propertyDAO.findByAgentID(user.id(), pageable);
+        boolean isAdmin = UserContext.getRoles().stream().anyMatch(role -> role.equals(Roles.ADMIN));
+        Page<Property> properties = isAdmin ? propertyDAO.findAll(pageable) : propertyDAO.findByAgentID(UserContext.getUserId(), pageable);
         return properties.map((p) -> propertyMapper.toDtoWithShortAddress(p, getLocationList(p.getLocation())));
     }
 

@@ -86,6 +86,7 @@ public interface PropertyRepository extends JpaRepository<Property, Long>, JpaSp
             AND (:category IS NULL OR p.category = :category)
             AND (:offerType IS NULL OR p.offer_type = :offerType)
             AND (:occupancyStatus IS NULL OR p.occupancy_status = :occupancyStatus)
+            AND (:agentID IS NULL OR p.agentID = :agentID)
         """, countQuery = """
         SELECT COUNT(p.id) FROM properties p
         JOIN property_locations l ON p.location_id = l.id
@@ -109,8 +110,10 @@ public interface PropertyRepository extends JpaRepository<Property, Long>, JpaSp
             AND (:category IS NULL OR p.category = :category)
             AND (:offerType IS NULL OR p.offer_type = :offerType)
             AND (:occupancyStatus IS NULL OR p.occupancy_status = :occupancyStatus)
+            AND (:agentID IS NULL OR p.agentID = :agentID)
         """, nativeQuery = true)
     Page<Property> search(
+            @Param("agentID") Long agentID,
             @Param("search") String search,
             @Param("listingStatus") String listingStatus,
             @Param("type") String type,

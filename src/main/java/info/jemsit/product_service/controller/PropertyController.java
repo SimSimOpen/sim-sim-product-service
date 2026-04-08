@@ -49,11 +49,12 @@ public class PropertyController {
     }
 
 
-    //This method for client landing page
     @GetMapping("all")
     public ResponseEntity<?> getAllProperty(Pageable pageable) {
         return ResponseEntity.ok(propertyService.getAll(pageable));
     }
+
+    //This method for client landing page
     @GetMapping("all/published")
     public ResponseEntity<?> getAllPublishedProperty(Pageable pageable) {
         return ResponseEntity.ok(propertyService.getAllPublished(pageable));
@@ -92,8 +93,6 @@ public class PropertyController {
             PropertyFilterRequestDTO filterRequest,
             Pageable pageable
     ) {
-        System.out.println("Filter Request: " + filterRequest);
-        System.out.println("Pageable: " + pageable);
         return ResponseEntity.ok(propertyService.filterProperties(filterRequest, pageable));
     }
 }

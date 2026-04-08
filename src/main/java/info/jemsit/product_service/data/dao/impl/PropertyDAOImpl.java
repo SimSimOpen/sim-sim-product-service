@@ -1,5 +1,7 @@
 package info.jemsit.product_service.data.dao.impl;
 
+import info.jemsit.common.UserContext;
+import info.jemsit.common.data.enums.Roles;
 import info.jemsit.common.dto.response.product.propeprty.PropertiesStats;
 import info.jemsit.product_service.data.dao.PropertyDAO;
 import info.jemsit.product_service.data.model.property.Property;
@@ -35,7 +37,7 @@ public class PropertyDAOImpl implements PropertyDAO {
     @Override
     @Transactional
     public Property update(Property property) {
-        log.info("Updating property: {}", property.getTitle() !=null ? property.getTitle() : property.getId());
+        log.info("Updating property: {}", property.getTitle() != null ? property.getTitle() : property.getId());
         return propertyRepository.save(property);
     }
 
@@ -112,7 +114,10 @@ public class PropertyDAOImpl implements PropertyDAO {
 
         log.info("Searching properties with search: {}, listingStatus: {}, type: {}, category: {}, offerType: {}, occupancyStatus: {} and pagination: {}",
                 search, listingStatus, type, category, offerType, occupancyStatus, pageable);
-        return propertyRepository.search(search, listingStatus, type, category, offerType, occupancyStatus, pageable);
+        if (UserContext.getRoles().contains(Roles.AGENT))
+            return propertyRepository.search(UserContext.getUserId(), search, listingStatus, type, category, offerType, occupancyStatus, pageable);
+        else
+            return propertyRepository.search(null, search, listingStatus, type, category, offerType, occupancyStatus, pageable);
     }
 
     @Override

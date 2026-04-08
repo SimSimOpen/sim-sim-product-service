@@ -1,7 +1,9 @@
 package info.jemsit.product_service.service.impl;
 
+import info.jemsit.common.UserContext;
 import info.jemsit.common.clients.auth.AuthServiceClient;
 import info.jemsit.common.clients.media.MediaServiceClient;
+import info.jemsit.common.data.enums.Roles;
 import info.jemsit.common.dto.request.product.property.PropertyFilterRequestDTO;
 import info.jemsit.common.dto.response.product.propeprty.PropertyResponseDTO;
 import info.jemsit.product_service.data.dao.PropertyDAO;
@@ -49,6 +51,10 @@ public class PropertyFilterServiceImpl implements PropertyFilterService {
 
             List<Predicate> predicates = new java.util.ArrayList<>();
 
+            if (UserContext.getRoles().contains(Roles.AGENT)) {
+                System.out.println("User is Agent");
+                predicates.add(criteriaBuilder.equal(root.get("agentID"), UserContext.getUserId()));
+            }
 
             if(filterRequest.category() != null) {
                 predicates.add(criteriaBuilder.equal(root.get("category"), filterRequest.category()));
