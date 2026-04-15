@@ -88,6 +88,7 @@ public class PropertyController {
     public ResponseEntity<?> getPropertyStats() {
         return ResponseEntity.ok(propertyService.getPropertiesStats());
     }
+
     @GetMapping("filter")
     public ResponseEntity<?> filterProperties(
             PropertyFilterRequestDTO filterRequest,

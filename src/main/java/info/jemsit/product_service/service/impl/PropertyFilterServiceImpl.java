@@ -51,12 +51,12 @@ public class PropertyFilterServiceImpl implements PropertyFilterService {
 
             List<Predicate> predicates = new java.util.ArrayList<>();
 
-            if (UserContext.getRoles().contains(Roles.AGENT)) {
+            if (UserContext.getRoles() != null && UserContext.getRoles().contains(Roles.AGENT)) {
                 System.out.println("User is Agent");
                 predicates.add(criteriaBuilder.equal(root.get("agentID"), UserContext.getUserId()));
             }
 
-            if(filterRequest.category() != null) {
+            if (filterRequest.category() != null) {
                 predicates.add(criteriaBuilder.equal(root.get("category"), filterRequest.category()));
             }
             if (filterRequest.type() != null) {
@@ -70,7 +70,7 @@ public class PropertyFilterServiceImpl implements PropertyFilterService {
                 predicates.add(criteriaBuilder.equal(root.get("listingStatus"), filterRequest.listingStatus()));
             }
 
-            if(filterRequest.occupancyStatus() != null) {
+            if (filterRequest.occupancyStatus() != null) {
                 predicates.add(criteriaBuilder.equal(root.get("occupancyStatus"), filterRequest.occupancyStatus()));
             }
 
