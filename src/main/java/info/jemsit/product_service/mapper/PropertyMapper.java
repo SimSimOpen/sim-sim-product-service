@@ -7,12 +7,17 @@ import info.jemsit.product_service.data.model.property.Property;
 import info.jemsit.product_service.data.model.property.PropertyMediaData;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
+import org.springframework.beans.factory.annotation.Value;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Mapper(componentModel = "spring")
-public interface PropertyMapper {
+public abstract class PropertyMapper {
+
+
+    @Value("${minio.endpoint}")
+    private String minioEndpoint;
 
     @Mapping(target = "updatedAt", ignore = true)
     @Mapping(target = "isDeleted", ignore = true)
@@ -20,24 +25,24 @@ public interface PropertyMapper {
     @Mapping(target = "createdAt", ignore = true)
     @Mapping(target = "agentID", ignore = true)
     @Mapping(target = "agent", ignore = true)
-    Property toEntity(PropertyRequestDTO resident);
+    public abstract Property toEntity(PropertyRequestDTO resident);
 
     @Mapping(target = "medias", expression = "java(mapMedia(property.getMedias()))")
     @Mapping(target = "location", ignore = true)
-    PropertyResponseDTO toDto(Property property);
+    public abstract PropertyResponseDTO toDto(Property property);
 
     @Mapping(target = "medias", expression = "java(mapMedia(property.getMedias()))")
     @Mapping(target = "location", source = "shortAddress")
     @Mapping(target = "amenities", source = "property.amenities")
-    PropertyResponseDTO toDtoWithShortAddress(Property property, List<String> shortAddress);
+    public abstract PropertyResponseDTO toDtoWithShortAddress(Property property, List<String> shortAddress);
 
-    default List<PropertyMedia> mapMedia(List<PropertyMediaData> media) {
+    public List<PropertyMedia> mapMedia(List<PropertyMediaData> media) {
         if (media == null) {
             return null;
         }
         return media.stream()
-                .map(p->{
-                    return new PropertyMedia(p.getId(), "https://api.media.simsim.fit"+p.getMediaURL(), p.getIsCoverImage());
+                .map(p -> {
+                    return new PropertyMedia(p.getId(), minioEndpoint + p.getMediaURL(), p.getIsCoverImage());
                 })
                 .collect(Collectors.toList());
     }
