@@ -7,8 +7,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.stereotype.Service;
 
-import static info.jemsit.common.data.constants.RabbitMQConstants.MEDIA_EXCHANGE;
-import static info.jemsit.common.data.constants.RabbitMQConstants.MEDIA_KEY;
+import static info.jemsit.common.data.constants.RabbitMQConstants.*;
 
 @Service
 @Slf4j
@@ -21,8 +20,8 @@ public class RabbitMQServiceImpl implements RabbitMQService {
     public <T extends RabbitMQMessage> void sendMessageToRabbitMQ(T message) {
         log.info("Notification sent: {}", message.getMessageString());
         rabbitTemplate.convertAndSend(
-                MEDIA_EXCHANGE,
-                MEDIA_KEY,
+                PRODUCT_EXCHANGE,
+                PRODUCT_KEY,
                 message
         );
     }
